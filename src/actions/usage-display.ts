@@ -109,11 +109,7 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
       red: this.settings.thresholdRed ?? 90,
     };
 
-    const backgroundColor = getBackgroundColor(
-      usage.fiveHour.utilization,
-      usage.sevenDay.utilization,
-      thresholds
-    );
+    const maxUtil = Math.max(usage.fiveHour.utilization, usage.sevenDay.utilization);
 
     const nearestReset = getNearestReset(
       usage.fiveHour.resetsAt,
@@ -128,7 +124,8 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
       fiveHourUtil: usage.fiveHour.utilization,
       sevenDayUtil: usage.sevenDay.utilization,
       resetLabel,
-      backgroundColor,
+      maxUtil,
+      thresholds,
     });
   }
 }
