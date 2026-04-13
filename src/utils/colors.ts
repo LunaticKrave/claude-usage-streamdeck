@@ -1,19 +1,16 @@
 export interface ColorThresholds {
   yellow: number;
-  orange: number;
   red: number;
 }
 
 const DEFAULT_THRESHOLDS: ColorThresholds = {
-  yellow: 50,
-  orange: 75,
+  yellow: 70,
   red: 90,
 };
 
 const COLORS = {
   green: "#2ecc71",
   yellow: "#f1c40f",
-  orange: "#e67e22",
   red: "#e74c3c",
   grey: "#95a5a6",
 } as const;
@@ -39,7 +36,6 @@ function lerp(a: [number, number, number], b: [number, number, number], t: numbe
 const COLOR_STOPS = [
   hexToRgb(COLORS.green),
   hexToRgb(COLORS.yellow),
-  hexToRgb(COLORS.orange),
   hexToRgb(COLORS.red),
 ];
 
@@ -52,14 +48,11 @@ export function getBackgroundColor(
     ? Math.max(utilization1, utilization2)
     : utilization1;
 
-  const stops = [0, thresholds.yellow, thresholds.orange, thresholds.red];
+  const stops = [0, thresholds.yellow, thresholds.red];
 
-  // Before first threshold — pure green
   if (value <= 0) return COLORS.green;
-  // After last threshold — pure red
   if (value >= thresholds.red) return COLORS.red;
 
-  // Find which segment we're in and interpolate
   for (let i = 0; i < stops.length - 1; i++) {
     if (value <= stops[i + 1]) {
       const t = (value - stops[i]) / (stops[i + 1] - stops[i]);

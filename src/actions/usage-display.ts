@@ -18,7 +18,6 @@ interface PluginSettings {
   [key: string]: JsonValue;
   pollInterval?: number;
   thresholdYellow?: number;
-  thresholdOrange?: number;
   thresholdRed?: number;
 }
 
@@ -106,8 +105,7 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
 
   private buildImage(usage: UsageData, stale: boolean): string {
     const thresholds: ColorThresholds = {
-      yellow: this.settings.thresholdYellow ?? 50,
-      orange: this.settings.thresholdOrange ?? 75,
+      yellow: this.settings.thresholdYellow ?? 70,
       red: this.settings.thresholdRed ?? 90,
     };
 
