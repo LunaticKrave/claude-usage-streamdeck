@@ -1,12 +1,13 @@
 # Claude Usage — Stream Deck Plugin
 
-A native Elgato Stream Deck plugin that displays your Claude (Pro/Max) subscription usage on a button. See your 5-hour and 7-day utilization at a glance, with a color-coded background that shifts from green to red as you approach your limits.
+A native Elgato Stream Deck plugin that displays your Claude (Pro/Max) subscription usage on a button. See your session and weekly utilization at a glance with an arc-ring design on a dark navy background.
 
 ## Features
 
-- **Live utilization** — 5-hour and 7-day usage percentages updated every 60 seconds
+- **Arc-ring display** — session utilization shown as a circular progress arc
+- **Live utilization** — 5-hour session and 7-day weekly percentages updated every 60 seconds
 - **Reset timer** — shows time until your nearest usage window resets
-- **Color-coded** — background shifts green → yellow → orange → red based on utilization
+- **Color-coded text** — percentage text turns yellow near limits and red when critical, based on whichever window (session or weekly) is higher
 - **Zero config** — auto-reads your Claude Code OAuth token from the macOS Keychain
 - **Press to refresh** — tap the button for an immediate update
 - **Configurable** — adjust poll interval and color thresholds via the Property Inspector
@@ -80,23 +81,27 @@ Then restart the Stream Deck app.
 ## Button Display
 
 ```
-┌──────────────┐
-│   5h: 17%    │  ← 5-hour utilization
-│   7d: 11%    │  ← 7-day utilization
-│   R: 2h 13m  │  ← time until reset
-└──────────────┘
+┌──────────────────┐
+│    ╭────╮        │
+│   ( 51% )  ←  session (5h) utilization as arc ring
+│    ╰────╯        │
+│    SESSION       │
+│ ─────────────── │
+│ 7d 46%  ↺ 2h33m │  ← weekly util + time until reset
+└──────────────────┘
 ```
 
-### Background Colors
+The arc ring fills clockwise as your session usage increases. The background is always dark navy.
 
-| Utilization | Color  |
-|-------------|--------|
-| 0–49%       | Green  |
-| 50–74%      | Yellow |
-| 75–89%      | Orange |
-| 90–100%     | Red    |
+### Text Colors
 
-The color is based on whichever window (5h or 7d) has higher utilization.
+| Max utilization (session or weekly) | Text color |
+|-------------------------------------|------------|
+| Below 70%                           | White      |
+| 70–89%                              | Yellow     |
+| 90%+                                | Red        |
+
+Color is driven by whichever window (5h or 7d) has higher utilization — so a high weekly usage will warn you even when your current session is low.
 
 ### Status States
 
@@ -120,7 +125,7 @@ If you see "Wait" frequently, try increasing the poll interval to 2 or 5 minutes
 Click the action in the Stream Deck app to open the Property Inspector:
 
 - **Poll Interval** — how often to fetch usage (30s, 60s, 2m, or 5m)
-- **Color Thresholds** — customize when the background changes color
+- **Color Thresholds** — customize when the percentage text changes color (default: yellow at 70%, red at 90%)
 
 ## How It Works
 

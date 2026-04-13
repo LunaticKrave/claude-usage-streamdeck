@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.1.0 (2026-04-13)
+
+### Changed
+
+- Redesigned button with a dark navy arc-ring layout — session utilization now displayed as a circular progress arc
+- Fixed dark navy background replaces the old green → red gradient background
+- Text color now indicates usage level (white → yellow → red) based on whichever window (session or weekly) is higher, so approaching weekly limits warns you even when the current session is low
+- Bottom row shows weekly utilization and reset timer in clean white text
+
+### Fixed
+
+- SVG `rgba()` fill values replaced with `fill-opacity` attributes for correct rendering in all environments
+
+---
+
 ## 1.0.0 (2026-04-12)
 
 Initial release.
