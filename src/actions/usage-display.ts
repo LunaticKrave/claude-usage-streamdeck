@@ -11,7 +11,7 @@ import type { JsonValue } from "@elgato/utils";
 import { getAccessToken } from "../modules/keychain";
 import { fetchUsage, type UsageData, type FetchResult } from "../modules/api-client";
 import { renderButton, renderErrorButton } from "../modules/renderer";
-import { getBackgroundColor, type ColorThresholds } from "../utils/colors";
+import type { ColorThresholds } from "../utils/colors";
 import { formatTimeUntil, getNearestReset } from "../utils/time-format";
 
 interface PluginSettings {
