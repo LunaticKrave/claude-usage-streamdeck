@@ -69,6 +69,11 @@ describe("renderButton", () => {
     const svg = decodeURIComponent(result.split(",")[1]);
     expect(svg).not.toContain("↺");
   });
+
+  it("does not render arc fill circle when fiveHourUtil is 0", () => {
+    const svg = decodeURIComponent(renderButton({ ...base, fiveHourUtil: 0 }).split(",")[1]);
+    expect(svg).not.toContain('stroke="#4a90d9"');
+  });
 });
 
 describe("renderErrorButton", () => {
