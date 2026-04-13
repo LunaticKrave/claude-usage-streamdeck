@@ -8,59 +8,11 @@ const DEFAULT_THRESHOLDS: ColorThresholds = {
   red: 90,
 };
 
-const COLORS = {
-  green: "#2ecc71",
-  yellow: "#f1c40f",
-  red: "#e74c3c",
-  grey: "#95a5a6",
-} as const;
-
-function hexToRgb(hex: string): [number, number, number] {
-  const n = parseInt(hex.slice(1), 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-}
-
-function rgbToHex(r: number, g: number, b: number): string {
-  return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
-}
-
-function lerp(a: [number, number, number], b: [number, number, number], t: number): string {
-  const clamped = Math.max(0, Math.min(1, t));
-  return rgbToHex(
-    Math.round(a[0] + (b[0] - a[0]) * clamped),
-    Math.round(a[1] + (b[1] - a[1]) * clamped),
-    Math.round(a[2] + (b[2] - a[2]) * clamped),
-  );
-}
-
-const COLOR_STOPS = [
-  hexToRgb(COLORS.green),
-  hexToRgb(COLORS.yellow),
-  hexToRgb(COLORS.red),
-];
-
-export function getBackgroundColor(
-  utilization1: number,
-  utilization2?: number,
+export function getTextColor(
+  maxUtil: number,
   thresholds: ColorThresholds = DEFAULT_THRESHOLDS
 ): string {
-  const value = utilization2 !== undefined
-    ? Math.max(utilization1, utilization2)
-    : utilization1;
-
-  const stops = [0, thresholds.yellow, thresholds.red];
-
-  if (value <= 0) return COLORS.green;
-  if (value >= thresholds.red) return COLORS.red;
-
-  for (let i = 0; i < stops.length - 1; i++) {
-    if (value <= stops[i + 1]) {
-      const t = (value - stops[i]) / (stops[i + 1] - stops[i]);
-      return lerp(COLOR_STOPS[i], COLOR_STOPS[i + 1], t);
-    }
-  }
-
-  return COLORS.red;
+  if (maxUtil >= thresholds.red) return "#e05c4b";
+  if (maxUtil >= thresholds.yellow) return "#e8b84b";
+  return "white";
 }
-
-export { COLORS };
