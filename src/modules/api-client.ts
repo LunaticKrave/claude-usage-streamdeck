@@ -8,24 +8,23 @@ export interface UsageData {
   sevenDay: UsageWindow;
 }
 
-export function parseUsageResponse(data: unknown): UsageData | null {
-  if (!data || typeof data !== "object") return null;
+export function parseUsageHeaders(headers: Headers): UsageData | null {
+  const fiveHourUtil = parseFloat(headers.get("anthropic-ratelimit-unified-5h-utilization") ?? "");
+  const sevenDayUtil = parseFloat(headers.get("anthropic-ratelimit-unified-7d-utilization") ?? "");
 
-  const obj = data as Record<string, unknown>;
-  const fiveHour = obj.five_hour as { utilization?: number; resets_at?: string | null } | undefined;
-  const sevenDay = obj.seven_day as { utilization?: number; resets_at?: string | null } | undefined;
+  if (isNaN(fiveHourUtil) || isNaN(sevenDayUtil)) return null;
 
-  if (!fiveHour || typeof fiveHour.utilization !== "number") return null;
-  if (!sevenDay || typeof sevenDay.utilization !== "number") return null;
+  const fiveHourReset = headers.get("anthropic-ratelimit-unified-5h-reset");
+  const sevenDayReset = headers.get("anthropic-ratelimit-unified-7d-reset");
 
   return {
     fiveHour: {
-      utilization: fiveHour.utilization,
-      resetsAt: fiveHour.resets_at ?? null,
+      utilization: fiveHourUtil * 100,
+      resetsAt: fiveHourReset ? new Date(parseInt(fiveHourReset, 10) * 1000).toISOString() : null,
     },
     sevenDay: {
-      utilization: sevenDay.utilization,
-      resetsAt: sevenDay.resets_at ?? null,
+      utilization: sevenDayUtil * 100,
+      resetsAt: sevenDayReset ? new Date(parseInt(sevenDayReset, 10) * 1000).toISOString() : null,
     },
   };
 }
@@ -38,23 +37,30 @@ export interface FetchResult {
 
 export async function fetchUsage(accessToken: string): Promise<FetchResult> {
   try {
-    const response = await fetch("https://api.anthropic.com/api/oauth/usage", {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "anthropic-beta": "oauth-2025-04-20",
+        "x-api-key": accessToken,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
       },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 1,
+        messages: [{ role: "user", content: "." }],
+      }),
     });
 
     if (response.status === 429) {
       const retryAfter = parseInt(response.headers.get("retry-after") ?? "", 10);
       return { data: null, error: "rate_limited", retryAfterSeconds: isNaN(retryAfter) ? null : retryAfter };
     }
-    if (response.status === 401 || response.status === 403) return { data: null, error: "auth_failed", retryAfterSeconds: null };
-    if (!response.ok) return { data: null, error: "unknown", retryAfterSeconds: null };
+    if (response.status === 401 || response.status === 403) {
+      return { data: null, error: "auth_failed", retryAfterSeconds: null };
+    }
 
-    const data = await response.json();
-    const parsed = parseUsageResponse(data);
-    return { data: parsed, error: parsed ? null : "unknown", retryAfterSeconds: null };
+    const data = parseUsageHeaders(response.headers);
+    return { data, error: data ? null : "unknown", retryAfterSeconds: null };
   } catch {
     return { data: null, error: "unknown", retryAfterSeconds: null };
   }
