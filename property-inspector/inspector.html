@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Claude Usage Settings</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      color: #ccc;
+      background: #2d2d2d;
+      margin: 0;
+      padding: 12px;
+    }
+    .field {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    label {
+      flex: 0 0 120px;
+      text-align: right;
+      padding-right: 8px;
+    }
+    select, input {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: #ccc;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+    h3 {
+      color: #eee;
+      font-size: 13px;
+      margin: 16px 0 8px 0;
+      border-bottom: 1px solid #444;
+      padding-bottom: 4px;
+    }
+    h3:first-child { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <h3>Refresh</h3>
+  <div class="field">
+    <label>Poll Interval</label>
+    <select id="pollInterval">
+      <option value="30">30 seconds</option>
+      <option value="60" selected>60 seconds</option>
+      <option value="120">2 minutes</option>
+      <option value="300">5 minutes</option>
+    </select>
+  </div>
+
+  <h3>Color Thresholds (%)</h3>
+  <div class="field">
+    <label>Yellow at</label>
+    <input type="number" id="thresholdYellow" min="1" max="100" placeholder="50" />
+  </div>
+  <div class="field">
+    <label>Orange at</label>
+    <input type="number" id="thresholdOrange" min="1" max="100" placeholder="75" />
+  </div>
+  <div class="field">
+    <label>Red at</label>
+    <input type="number" id="thresholdRed" min="1" max="100" placeholder="90" />
+  </div>
+
+  <script>
+    // Stream Deck Property Inspector WebSocket connection
+    let websocket = null;
+    let uuid = null;
+    let actionInfo = null;
+
+    function connectElgatoStreamDeckSocket(inPort, inPropertyInspectorUUID, inRegisterEvent, inInfo, inActionInfo) {
+      uuid = inPropertyInspectorUUID;
+      actionInfo = JSON.parse(inActionInfo);
+
+      websocket = new WebSocket("ws://127.0.0.1:" + inPort);
+
+      websocket.onopen = function () {
+        websocket.send(JSON.stringify({
+          event: inRegisterEvent,
+          uuid: uuid,
+        }));
+        // Load current settings
+        const settings = actionInfo.payload?.settings || {};
+        if (settings.pollInterval) {
+          document.getElementById("pollInterval").value = settings.pollInterval;
+        }
+        if (settings.thresholdYellow) {
+          document.getElementById("thresholdYellow").value = settings.thresholdYellow;
+        }
+        if (settings.thresholdOrange) {
+          document.getElementById("thresholdOrange").value = settings.thresholdOrange;
+        }
+        if (settings.thresholdRed) {
+          document.getElementById("thresholdRed").value = settings.thresholdRed;
+        }
+      };
+    }
+
+    function saveSettings() {
+      const settings = {
+        pollInterval: parseInt(document.getElementById("pollInterval").value) || 60,
+        thresholdYellow: parseInt(document.getElementById("thresholdYellow").value) || undefined,
+        thresholdOrange: parseInt(document.getElementById("thresholdOrange").value) || undefined,
+        thresholdRed: parseInt(document.getElementById("thresholdRed").value) || undefined,
+      };
+
+      // Remove undefined keys
+      Object.keys(settings).forEach(k => settings[k] === undefined && delete settings[k]);
+
+      if (websocket) {
+        websocket.send(JSON.stringify({
+          event: "setSettings",
+          context: uuid,
+          payload: settings,
+        }));
+      }
+    }
+
+    // Attach change listeners
+    document.addEventListener("DOMContentLoaded", function () {
+      ["pollInterval", "thresholdYellow", "thresholdOrange", "thresholdRed"].forEach(function (id) {
+        document.getElementById(id).addEventListener("change", saveSettings);
+      });
+    });
+  </script>
+</body>
+</html>
