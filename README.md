@@ -22,22 +22,62 @@ A native Elgato Stream Deck plugin that displays your Claude (Pro/Max) subscript
 
 ## Installation
 
-### From source
+### Prerequisites
+
+1. Make sure you have [Node.js](https://nodejs.org/) installed (v20+)
+2. Make sure [Claude Code](https://docs.anthropic.com/en/docs/claude-code) is installed and you're logged in
+3. Make sure the [Elgato Stream Deck](https://www.elgato.com/downloads) software is installed
+
+### Step 1: Clone and build
 
 ```bash
-git clone https://github.com/spencerwood/claude-usage-streamdeck.git
+git clone https://github.com/LunaticKrave/claude-usage-streamdeck.git
 cd claude-usage-streamdeck
 npm install
 npm run build
 ```
 
-Then symlink the plugin into your Stream Deck plugins directory:
+### Step 2: Install the plugin
+
+Symlink the plugin into the Stream Deck plugins directory:
 
 ```bash
 ln -s "$(pwd)" "$HOME/Library/Application Support/com.elgato.StreamDeck/Plugins/com.claude.usage.sdPlugin"
 ```
 
-Restart the Stream Deck app, then drag the **"Usage Display"** action (under the **Claude** category) onto a button.
+### Step 3: Restart Stream Deck
+
+Quit and reopen the Elgato Stream Deck app, or run:
+
+```bash
+osascript -e 'quit app "Elgato Stream Deck"' && sleep 2 && open -a "Elgato Stream Deck"
+```
+
+### Step 4: Add the button
+
+1. Open the Stream Deck app
+2. Find the **"Claude"** category in the action list on the right
+3. Drag **"Usage Display"** onto any button
+4. Your Claude usage stats should appear within a few seconds
+
+### Updating
+
+```bash
+cd claude-usage-streamdeck
+git pull
+npm install
+npm run build
+```
+
+Then restart the Stream Deck app.
+
+### Uninstalling
+
+```bash
+rm "$HOME/Library/Application Support/com.elgato.StreamDeck/Plugins/com.claude.usage.sdPlugin"
+```
+
+Then restart the Stream Deck app.
 
 ## Button Display
 
