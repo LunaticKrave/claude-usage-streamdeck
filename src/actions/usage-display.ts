@@ -109,8 +109,6 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
       red: this.settings.thresholdRed ?? 90,
     };
 
-    const maxUtil = Math.max(usage.fiveHour.utilization, usage.sevenDay.utilization);
-
     const nearestReset = getNearestReset(
       usage.fiveHour.resetsAt,
       usage.sevenDay.resetsAt
@@ -124,7 +122,6 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
       fiveHourUtil: usage.fiveHour.utilization,
       sevenDayUtil: usage.sevenDay.utilization,
       resetLabel,
-      maxUtil,
       thresholds,
     });
   }

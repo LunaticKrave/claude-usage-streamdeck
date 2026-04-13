@@ -5,7 +5,6 @@ export interface ButtonData {
   fiveHourUtil: number;
   sevenDayUtil: number;
   resetLabel: string | null;
-  maxUtil: number;
   thresholds?: ColorThresholds;
 }
 
@@ -19,8 +18,9 @@ const ARC_CY = 64;
 const CIRCUMFERENCE = 2 * Math.PI * ARC_RADIUS;
 
 export function renderButton(data: ButtonData): string {
-  const { fiveHourUtil, sevenDayUtil, resetLabel, maxUtil, thresholds } = data;
+  const { fiveHourUtil, sevenDayUtil, resetLabel, thresholds } = data;
 
+  const maxUtil = Math.max(fiveHourUtil, sevenDayUtil);
   const dashLength = Math.min(CIRCUMFERENCE - 1, (fiveHourUtil / 100) * CIRCUMFERENCE);
   const textColor = getTextColor(maxUtil, thresholds);
   const sessionPct = `${Math.round(fiveHourUtil)}%`;

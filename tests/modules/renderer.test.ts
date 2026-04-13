@@ -6,7 +6,6 @@ describe("renderButton", () => {
     fiveHourUtil: 29,
     sevenDayUtil: 45,
     resetLabel: "3h 2m",
-    maxUtil: 45,
   };
 
   it("returns a data URI", () => {
@@ -50,17 +49,17 @@ describe("renderButton", () => {
   });
 
   it("shows white text when maxUtil is below yellow threshold", () => {
-    const svg = decodeURIComponent(renderButton({ ...base, maxUtil: 45 }).split(",")[1]);
+    const svg = decodeURIComponent(renderButton(base).split(",")[1]);
     expect(svg).toContain('fill="white"');
   });
 
   it("shows yellow text when maxUtil is at yellow threshold", () => {
-    const svg = decodeURIComponent(renderButton({ ...base, maxUtil: 75 }).split(",")[1]);
+    const svg = decodeURIComponent(renderButton({ ...base, sevenDayUtil: 75 }).split(",")[1]);
     expect(svg).toContain("#e8b84b");
   });
 
   it("shows red text when maxUtil is at red threshold", () => {
-    const svg = decodeURIComponent(renderButton({ ...base, maxUtil: 92 }).split(",")[1]);
+    const svg = decodeURIComponent(renderButton({ ...base, sevenDayUtil: 92 }).split(",")[1]);
     expect(svg).toContain("#e05c4b");
   });
 
