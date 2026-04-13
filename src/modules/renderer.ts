@@ -43,12 +43,12 @@ export function renderButton(data: ButtonData): string {
           transform="rotate(-90 ${ARC_CX} ${ARC_CY})"/>` : ""}
   <text x="${ARC_CX}" y="59" font-size="26" font-weight="700" fill="${textColor}" text-anchor="middle"
         dominant-baseline="central" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">${escapeXml(sessionPct)}</text>
-  <text x="${ARC_CX}" y="80" font-size="11" fill="rgba(255,255,255,0.45)" text-anchor="middle"
+  <text x="${ARC_CX}" y="80" font-size="11" fill="rgba(255,255,255,0.6)" text-anchor="middle"
         dominant-baseline="central" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">SESSION</text>
-  <line x1="14" y1="110" x2="130" y2="110" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-  <text x="44" y="127" font-size="13" fill="rgba(255,255,255,0.55)" text-anchor="middle"
+  <line x1="14" y1="110" x2="130" y2="110" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <text x="44" y="127" font-size="13" fill="rgba(255,255,255,0.85)" text-anchor="middle"
         dominant-baseline="central" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">${escapeXml(weeklyLabel)}</text>
-  ${resetStr ? `<text x="100" y="127" font-size="13" fill="rgba(255,255,255,0.55)" text-anchor="middle"
+  ${resetStr ? `<text x="100" y="127" font-size="13" fill="rgba(255,255,255,0.85)" text-anchor="middle"
         dominant-baseline="central" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">${escapeXml(resetStr)}</text>` : ""}
 </svg>`;
 
