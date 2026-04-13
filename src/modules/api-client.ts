@@ -33,6 +33,7 @@ export function parseUsageResponse(data: unknown): UsageData | null {
 export interface FetchResult {
   data: UsageData | null;
   error: "rate_limited" | "auth_failed" | "unknown" | null;
+  retryAfterSeconds: number | null;
 }
 
 export async function fetchUsage(accessToken: string): Promise<FetchResult> {
@@ -44,14 +45,17 @@ export async function fetchUsage(accessToken: string): Promise<FetchResult> {
       },
     });
 
-    if (response.status === 429) return { data: null, error: "rate_limited" };
-    if (response.status === 401 || response.status === 403) return { data: null, error: "auth_failed" };
-    if (!response.ok) return { data: null, error: "unknown" };
+    if (response.status === 429) {
+      const retryAfter = parseInt(response.headers.get("retry-after") ?? "", 10);
+      return { data: null, error: "rate_limited", retryAfterSeconds: isNaN(retryAfter) ? null : retryAfter };
+    }
+    if (response.status === 401 || response.status === 403) return { data: null, error: "auth_failed", retryAfterSeconds: null };
+    if (!response.ok) return { data: null, error: "unknown", retryAfterSeconds: null };
 
     const data = await response.json();
     const parsed = parseUsageResponse(data);
-    return { data: parsed, error: parsed ? null : "unknown" };
+    return { data: parsed, error: parsed ? null : "unknown", retryAfterSeconds: null };
   } catch {
-    return { data: null, error: "unknown" };
+    return { data: null, error: "unknown", retryAfterSeconds: null };
   }
 }

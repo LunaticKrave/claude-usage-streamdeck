@@ -27,6 +27,7 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private lastUsage: UsageData | null = null;
   private settings: PluginSettings = {};
+  private rateLimitExpiresAt: number | null = null;
 
   override async onWillAppear(ev: WillAppearEvent<PluginSettings>): Promise<void> {
     this.settings = ev.payload.settings ?? {};
@@ -69,21 +70,38 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
 
     const result = await fetchUsage(credentials.accessToken);
     if (!result.data) {
-      if (this.lastUsage) {
+      if (result.error === "rate_limited") {
+        if (result.retryAfterSeconds) {
+          this.rateLimitExpiresAt = Date.now() + result.retryAfterSeconds * 1000;
+        }
+        const waitLabel = this.formatRateLimitWait();
+        await actionInstance.setImage(renderErrorButton("Wait", "#f39c12", waitLabel));
+      } else if (this.lastUsage) {
         const image = this.buildImage(this.lastUsage, true);
         await actionInstance.setImage(image);
       } else {
-        const label = result.error === "rate_limited" ? "Wait" :
-                      result.error === "auth_failed" ? "Auth" : "Error";
-        const color = result.error === "rate_limited" ? "#f39c12" : "#95a5a6";
-        await actionInstance.setImage(renderErrorButton(label, color));
+        const label = result.error === "auth_failed" ? "Auth" : "Error";
+        await actionInstance.setImage(renderErrorButton(label, "#95a5a6"));
       }
       return;
     }
 
+    this.rateLimitExpiresAt = null;
+
     this.lastUsage = result.data;
     const image = this.buildImage(result.data, false);
     await actionInstance.setImage(image);
+  }
+
+  private formatRateLimitWait(): string | undefined {
+    if (!this.rateLimitExpiresAt) return undefined;
+    const remaining = Math.max(0, this.rateLimitExpiresAt - Date.now());
+    const totalMinutes = Math.ceil(remaining / 60_000);
+    if (totalMinutes <= 0) return undefined;
+    if (totalMinutes < 60) return `${totalMinutes}m`;
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    return `${hours}h ${mins}m`;
   }
 
   private buildImage(usage: UsageData, stale: boolean): string {

@@ -103,9 +103,17 @@ The color is based on whichever window (5h or 7d) has higher utilization.
 | Button Text | Meaning |
 |-------------|---------|
 | `Setup`     | No Claude Code OAuth token found — log in to Claude Code |
-| `Wait`      | API rate limited — will retry automatically |
+| `Wait` + countdown | API rate limited — see below |
 | `Auth`      | Token expired or invalid — re-authenticate Claude Code |
 | `Error`     | Unexpected API error — will retry on next poll |
+
+### About the "Wait" State
+
+The usage API has a rate limit. When you first install the plugin or after heavy API usage, you may see **"Wait"** with a countdown (e.g., "Wait / 47m") on an orange background. This is normal.
+
+The rate limit typically resets within an hour. The plugin will automatically retry every 60 seconds and update the countdown. Once the rate limit clears, your usage stats will appear. You don't need to do anything — just wait it out.
+
+If you see "Wait" frequently, try increasing the poll interval to 2 or 5 minutes in the Property Inspector settings to reduce API calls.
 
 ## Settings
 
