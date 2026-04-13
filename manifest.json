@@ -32,5 +32,8 @@
   "Software": {
     "MinimumVersion": "6.0"
   },
-  "NodeCompatibleVersion": "20.5.1"
+  "Nodejs": {
+    "Version": "20",
+    "Debug": "enabled"
+  }
 }

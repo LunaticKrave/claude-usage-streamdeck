@@ -9,7 +9,7 @@ import {
 } from "@elgato/streamdeck";
 import type { JsonValue } from "@elgato/utils";
 import { getAccessToken } from "../modules/keychain";
-import { fetchUsage, type UsageData } from "../modules/api-client";
+import { fetchUsage, type UsageData, type FetchResult } from "../modules/api-client";
 import { renderButton, renderErrorButton } from "../modules/renderer";
 import { getBackgroundColor, type ColorThresholds } from "../utils/colors";
 import { formatTimeUntil, getNearestReset } from "../utils/time-format";
@@ -67,20 +67,22 @@ export class UsageDisplay extends SingletonAction<PluginSettings> {
       return;
     }
 
-    const usage = await fetchUsage(credentials.accessToken);
-    if (!usage) {
+    const result = await fetchUsage(credentials.accessToken);
+    if (!result.data) {
       if (this.lastUsage) {
-        // Show last known values with "?" indicator
         const image = this.buildImage(this.lastUsage, true);
         await actionInstance.setImage(image);
       } else {
-        await actionInstance.setImage(renderErrorButton("Error", "#95a5a6"));
+        const label = result.error === "rate_limited" ? "Wait" :
+                      result.error === "auth_failed" ? "Auth" : "Error";
+        const color = result.error === "rate_limited" ? "#f39c12" : "#95a5a6";
+        await actionInstance.setImage(renderErrorButton(label, color));
       }
       return;
     }
 
-    this.lastUsage = usage;
-    const image = this.buildImage(usage, false);
+    this.lastUsage = result.data;
+    const image = this.buildImage(result.data, false);
     await actionInstance.setImage(image);
   }
 

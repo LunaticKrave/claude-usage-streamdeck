@@ -30,16 +30,28 @@ export function parseUsageResponse(data: unknown): UsageData | null {
   };
 }
 
-export async function fetchUsage(accessToken: string): Promise<UsageData | null> {
-  const response = await fetch("https://api.anthropic.com/api/oauth/usage", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "anthropic-beta": "oauth-2025-04-20",
-    },
-  });
+export interface FetchResult {
+  data: UsageData | null;
+  error: "rate_limited" | "auth_failed" | "unknown" | null;
+}
 
-  if (!response.ok) return null;
+export async function fetchUsage(accessToken: string): Promise<FetchResult> {
+  try {
+    const response = await fetch("https://api.anthropic.com/api/oauth/usage", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "anthropic-beta": "oauth-2025-04-20",
+      },
+    });
 
-  const data = await response.json();
-  return parseUsageResponse(data);
+    if (response.status === 429) return { data: null, error: "rate_limited" };
+    if (response.status === 401 || response.status === 403) return { data: null, error: "auth_failed" };
+    if (!response.ok) return { data: null, error: "unknown" };
+
+    const data = await response.json();
+    const parsed = parseUsageResponse(data);
+    return { data: parsed, error: parsed ? null : "unknown" };
+  } catch {
+    return { data: null, error: "unknown" };
+  }
 }

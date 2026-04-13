@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/plugin.ts --bundle --platform=node --format=esm --outfile=dist/plugin.js --external:@elgato/streamdeck --target=node20",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "esbuild": "^0.28.0",
+    "sharp": "^0.34.5",
     "typescript": "^6.0.2",
     "vitest": "^4.1.4"
   }
