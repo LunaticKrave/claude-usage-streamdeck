@@ -1,0 +1,36 @@
+{
+  "SDKVersion": 2,
+  "Author": "Spencer Wood",
+  "Name": "Claude Usage",
+  "Description": "Displays Claude subscription usage limits on a Stream Deck button",
+  "Version": "1.0.0",
+  "Category": "Claude",
+  "CategoryIcon": "images/plugin-icon",
+  "Icon": "images/plugin-icon",
+  "CodePath": "dist/plugin.js",
+  "Actions": [
+    {
+      "Icon": "images/action-icon",
+      "Name": "Usage Display",
+      "States": [
+        {
+          "Image": "images/action-icon",
+          "TitleAlignment": "bottom",
+          "Title": ""
+        }
+      ],
+      "UUID": "com.claude.usage.display",
+      "PropertyInspectorPath": "property-inspector/inspector.html"
+    }
+  ],
+  "OS": [
+    {
+      "Platform": "mac",
+      "MinimumVersion": "10.15"
+    }
+  ],
+  "Software": {
+    "MinimumVersion": "6.0"
+  },
+  "NodeCompatibleVersion": "20.5.1"
+}
