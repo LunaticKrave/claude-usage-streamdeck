@@ -2,8 +2,6 @@
 
 A native Elgato Stream Deck plugin that displays your Claude (Pro/Max) subscription usage on a button. See your 5-hour and 7-day utilization at a glance, with a color-coded background that shifts from green to red as you approach your limits.
 
-![Stream Deck Mini showing Claude usage stats](images/plugin-icon@2x.png)
-
 ## Features
 
 - **Live utilization** — 5-hour and 7-day usage percentages updated every 60 seconds
