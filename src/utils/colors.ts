@@ -16,3 +16,12 @@ export function getTextColor(
   if (maxUtil >= thresholds.yellow) return "#e8b84b";
   return "white";
 }
+
+export function getRingColor(
+  util: number,
+  thresholds: ColorThresholds = DEFAULT_THRESHOLDS
+): string {
+  if (util >= thresholds.red) return "#e05c4b";
+  if (util >= thresholds.yellow) return "#e8b84b";
+  return "#4a90d9";
+}

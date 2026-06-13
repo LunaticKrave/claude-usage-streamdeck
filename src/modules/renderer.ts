@@ -1,4 +1,4 @@
-import { getTextColor } from "../utils/colors";
+import { getRingColor, getTextColor } from "../utils/colors";
 import type { ColorThresholds } from "../utils/colors";
 
 export interface ButtonData {
@@ -23,6 +23,7 @@ export function renderButton(data: ButtonData): string {
   const maxUtil = Math.max(fiveHourUtil, sevenDayUtil);
   const dashLength = Math.min(CIRCUMFERENCE - 1, (fiveHourUtil / 100) * CIRCUMFERENCE);
   const textColor = getTextColor(maxUtil, thresholds);
+  const ringColor = getRingColor(fiveHourUtil, thresholds);
   const sessionPct = `${Math.round(fiveHourUtil)}%`;
   const weeklyLabel = `7d ${Math.round(sevenDayUtil)}%`;
   const resetStr = resetLabel ? `↺ ${resetLabel}` : null;
@@ -36,7 +37,7 @@ export function renderButton(data: ButtonData): string {
   </defs>
   <rect width="144" height="144" rx="12" fill="url(#bg)"/>
   <circle cx="${ARC_CX}" cy="${ARC_CY}" r="${ARC_RADIUS}" fill="none" stroke="white" stroke-opacity="0.15" stroke-width="7"/>
-  ${fiveHourUtil > 0 ? `<circle cx="${ARC_CX}" cy="${ARC_CY}" r="${ARC_RADIUS}" fill="none" stroke="#4a90d9" stroke-width="7"
+  ${fiveHourUtil > 0 ? `<circle cx="${ARC_CX}" cy="${ARC_CY}" r="${ARC_RADIUS}" fill="none" stroke="${ringColor}" stroke-width="7"
           stroke-dasharray="${dashLength.toFixed(2)} ${CIRCUMFERENCE.toFixed(2)}"
           stroke-dashoffset="0"
           stroke-linecap="round"

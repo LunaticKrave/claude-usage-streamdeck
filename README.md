@@ -8,6 +8,7 @@ A native Elgato Stream Deck plugin that displays your Claude (Pro/Max) subscript
 - **Live utilization** — 5-hour session and 7-day weekly percentages updated every 60 seconds
 - **Reset timer** — shows time until your nearest usage window resets
 - **Color-coded text** — percentage text turns yellow near limits and red when critical, based on whichever window (session or weekly) is higher
+- **Color-coded ring** — the arc ring also shifts blue → yellow → red as your session approaches its limits
 - **Zero config** — auto-reads your Claude Code OAuth token from the macOS Keychain
 - **Press to refresh** — tap the button for an immediate update
 - **Configurable** — adjust poll interval and color thresholds via the Property Inspector
@@ -101,7 +102,17 @@ The arc ring fills clockwise as your session usage increases. The background is 
 | 70–89%                              | Yellow     |
 | 90%+                                | Red        |
 
-Color is driven by whichever window (5h or 7d) has higher utilization — so a high weekly usage will warn you even when your current session is low.
+Text color is driven by whichever window (5h or 7d) has higher utilization — so a high weekly usage will warn you even when your current session is low.
+
+### Ring Colors
+
+| Session (5h) utilization | Ring color |
+|--------------------------|------------|
+| Below 70%                | Blue       |
+| 70–89%                   | Yellow     |
+| 90%+                     | Red        |
+
+The ring's color is driven by the **session** percentage (the same value the ring fills toward), using the same thresholds as the text. So at 95% session and 20% weekly, both the ring and the text go red; at 20% session and 95% weekly, the ring stays blue while the text turns red.
 
 ### Status States
 

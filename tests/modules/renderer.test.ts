@@ -20,12 +20,29 @@ describe("renderButton", () => {
 
   it("contains the arc track circle", () => {
     const svg = decodeURIComponent(renderButton(base).split(",")[1]);
-    expect(svg).toContain('stroke="rgba(255,255,255,0.1)"');
+    expect(svg).toContain('stroke="white" stroke-opacity="0.15"');
   });
 
-  it("contains the arc fill circle in blue", () => {
+  it("contains the arc fill circle in blue when session is below yellow threshold", () => {
     const svg = decodeURIComponent(renderButton(base).split(",")[1]);
     expect(svg).toContain('stroke="#4a90d9"');
+  });
+
+  it("renders ring in yellow when session is at yellow threshold", () => {
+    const svg = decodeURIComponent(renderButton({ ...base, fiveHourUtil: 75 }).split(",")[1]);
+    expect(svg).toContain('stroke="#e8b84b"');
+  });
+
+  it("renders ring in red when session is at red threshold", () => {
+    const svg = decodeURIComponent(renderButton({ ...base, fiveHourUtil: 92 }).split(",")[1]);
+    expect(svg).toContain('stroke="#e05c4b"');
+  });
+
+  it("ring color is driven by session, not weekly", () => {
+    // Session low, weekly high — ring should stay blue
+    const svg = decodeURIComponent(renderButton({ ...base, fiveHourUtil: 20, sevenDayUtil: 95 }).split(",")[1]);
+    expect(svg).toContain('stroke="#4a90d9"');
+    expect(svg).not.toContain('stroke="#e05c4b"');
   });
 
   it("shows the session percentage", () => {

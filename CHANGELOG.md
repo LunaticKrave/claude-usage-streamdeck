@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 (2026-06-13)
+
+### Changed
+
+- Arc ring now color-shifts blue → yellow → red as the session percentage crosses the same thresholds used by the text (default 70% / 90%), so the ring's color reinforces the session utilization at a glance
+- Ring color is driven by the session (5h) value only; the text color continues to be driven by whichever of session or weekly is higher
+
 ## 1.1.0 (2026-04-13)
 
 ### Changed
