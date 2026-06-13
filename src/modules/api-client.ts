@@ -40,7 +40,11 @@ export async function fetchUsage(accessToken: string): Promise<FetchResult> {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "x-api-key": accessToken,
+        // Claude Code OAuth tokens (sk-ant-oat...) must be sent via the
+        // Authorization header with the OAuth beta flag — the API rejects
+        // them as "invalid x-api-key" otherwise.
+        "Authorization": `Bearer ${accessToken}`,
+        "anthropic-beta": "oauth-2025-04-20",
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
       },

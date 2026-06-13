@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { parseUsageHeaders } from "../src/modules/api-client";
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
+import { fetchUsage, parseUsageHeaders } from "../src/modules/api-client";
 
 describe("parseUsageHeaders", () => {
   function makeHeaders(entries: Record<string, string>): Headers {
@@ -62,5 +62,42 @@ describe("parseUsageHeaders", () => {
     const result = parseUsageHeaders(headers);
     expect(result!.fiveHour.utilization).toBeCloseTo(39);
     expect(result!.sevenDay.utilization).toBeCloseTo(43);
+  });
+});
+
+describe("fetchUsage authentication", () => {
+  let fetchMock: ReturnType<typeof vi.fn>;
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+    fetchMock = vi.fn(async () => new Response("", {
+      status: 200,
+      headers: {
+        "anthropic-ratelimit-unified-5h-utilization": "0.1",
+        "anthropic-ratelimit-unified-7d-utilization": "0.1",
+      },
+    }));
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("sends the OAuth token via Authorization: Bearer, not x-api-key", async () => {
+    await fetchUsage("sk-ant-oat-test-token");
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [, init] = fetchMock.mock.calls[0];
+    const headers = init.headers as Record<string, string>;
+    expect(headers["Authorization"]).toBe("Bearer sk-ant-oat-test-token");
+    expect(headers["x-api-key"]).toBeUndefined();
+  });
+
+  it("includes the anthropic-beta oauth flag", async () => {
+    await fetchUsage("sk-ant-oat-test-token");
+    const [, init] = fetchMock.mock.calls[0];
+    const headers = init.headers as Record<string, string>;
+    expect(headers["anthropic-beta"]).toBe("oauth-2025-04-20");
   });
 });

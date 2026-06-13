@@ -3,7 +3,7 @@
   "Author": "LunaticKrave",
   "Name": "Claude Usage",
   "Description": "Displays Claude subscription usage limits on a Stream Deck button",
-  "Version": "1.2.0",
+  "Version": "1.2.1",
   "Category": "Claude",
   "CategoryIcon": "images/plugin-icon",
   "Icon": "images/plugin-icon",

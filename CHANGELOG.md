@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 (2026-06-13)
+
+### Fixed
+
+- Authenticate against `/v1/messages` using `Authorization: Bearer <token>` with the `anthropic-beta: oauth-2025-04-20` header. The previous `x-api-key` header is for raw API keys; the Claude Code OAuth tokens (`sk-ant-oat…`) stored in the macOS Keychain are rejected as `invalid x-api-key`, which surfaced on the button as the `Auth` state
+
 ## 1.2.0 (2026-06-13)
 
 ### Changed
